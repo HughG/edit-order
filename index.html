@@ -1,0 +1,114 @@
+<html>
+<head>
+    <title>Editable, draggable ordering test</title>
+    <link rel="stylesheet" type="text/css" href="dragula.css">
+    <link rel="stylesheet" type="text/css" href="edit-order.css">
+</head>
+<body>
+<script type="text/javascript" src="dragula.js"></script>
+<script type="text/javascript">
+function setupDrag() {
+    dragula([document.querySelector('#list')], {
+        isContainer: function (el) {
+            return false; // only elements in drake.containers will be taken into account
+        },
+        moves: function (el, source, handle, sibling) {
+            console.log("moves(" + el + ", " + source + ", " + handle + ", " + sibling + ")");
+            return true; // elements are always draggable by default
+        },
+        accepts: function (el, target, source, sibling) {
+            return true; // elements can be dropped in any of the `containers` by default
+        },
+        invalid: function (el, handle) {
+            return false; // don't prevent any drags from initiating by default
+        },
+        direction: 'vertical',             // Y axis is considered when determining where an element would be dropped
+        copy: false,                       // elements are moved by default, not copied
+        copySortSource: false,             // elements in copy-source containers can be reordered
+        revertOnSpill: false,              // spilling will put the element back where it was dragged from, if this is true
+        removeOnSpill: false,              // spilling will `.remove` the element, if this is true
+        mirrorContainer: document.body,    // set the element that gets mirror elements appended
+        ignoreInputTextSelection: true     // allows users to select input text, see details below
+    });
+}
+if (window.addEventListener) {
+    window.addEventListener("load", setupDrag, false);
+} else if (window.attachEvent) {
+    window.attachEvent("onload", setupDrag);
+} else {
+    window.onload = setupDrag;
+}
+</script>
+</body>
+<table>
+    <thead>
+    <tr>
+        <th colspan="4">Original</th>
+        <th colspan="4">table heading</th>
+        <th colspan="4">table heading</th>
+        <th colspan="4">table heading</th>
+        <th colspan="4">table heading</th>
+        <th colspan="1"></th>
+        <th colspan="4">Current Pos</th>
+    </tr>
+    </thead>
+    <tfoot>
+    <tr>
+        <th colspan="4">Original</th>
+        <th colspan="4">table footer</th>
+        <th colspan="4">table footer</th>
+        <th colspan="4">table footer</th>
+        <th colspan="4">table footer</th>
+        <th colspan="1"></th>
+        <th colspan="4">Current Pos</th>
+    </tr>
+    </tfoot>
+    <tbody id="list">
+    <tr>
+        <th colspan="4">First Row</th>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="1"><div class="drag_handle">=</div></td>
+        <td colspan="4">1</td>
+    </tr>
+    <tr>
+        <th colspan="4">Second Row</th>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="1"><div class="drag_handle">=</div></td>
+        <td colspan="4">2</td>
+    </tr>
+    <tr>
+        <th colspan="4">Third Row</th>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="1"><div class="drag_handle">=</div></td>
+        <td colspan="4">3</td>
+    </tr>
+    <tr>
+        <th colspan="4">Fourth Row</th>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="1"><div class="drag_handle">=</div></td>
+        <td colspan="4">4</td>
+    </tr>
+    <tr>
+        <th colspan="4">Fifth Row</th>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="4">data</td>
+        <td colspan="1"><div class="drag_handle">=</div></td>
+        <td colspan="4">5</td>
+    </tr>
+    </tbody>
+</table>
+</html>

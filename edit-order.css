@@ -1,0 +1,15 @@
+table {
+    border: 2px solid silver;
+}
+th {
+    color: grey;
+}
+td {
+    background: whitesmoke;
+}
+
+.drag_handle {
+    padding: 0.1em 0.5em;
+    display: block;
+    cursor: ns-resize;
+}
