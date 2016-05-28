@@ -7,8 +7,33 @@
 </head>
 <body>
 <script type="text/javascript" src="dragula.js"></script>
+<script type="text/javascript" src="filedrop.js"></script>
 <script type="text/javascript" src="FileSaver.js"></script>
 <script type="text/javascript">
+function setupLoad() {
+    var options = {input: false}
+    var zone = new FileDrop('zone', options)
+
+    zone.event('send', function (files) {
+        files.each(function (file) {
+            file.readData(
+                function (str) {
+                    zone.el.value = str;
+                    var lines = str.split(/\r|\n|\r\n/);
+                    lines.forEach(function(line, index) {
+                        line = line.trim();
+                        if (line.length > 0) {
+                            console.log(line.split(" "));
+                        }
+                    });
+                }, function (e) {
+                    alert('Terrible error!')
+                },
+                'text'
+            )
+        })
+    })
+}
 function buildOrderText() {
     var list = document.getElementById('list');
     var rows = list.children;
@@ -48,6 +73,7 @@ function setupDrag() {
     dragula([document.querySelector('#list')]);
 }
 function setup() {
+    setupLoad();
     setupSave();
     setupDrag();
 }
@@ -62,6 +88,9 @@ if (window.addEventListener) {
 </script>
 </body>
 <buttton id="save" type="button">Save</buttton>
+<textarea id="zone" readonly="readonly">
+Drag & drop a file here to view its contents.
+</textarea>
 <table>
     <thead>
     <tr>
