@@ -11,8 +11,8 @@
 <script type="text/javascript" src="FileSaver.js"></script>
 <script type="text/javascript">
 function setupLoad() {
-    var options = {input: false}
-    var zone = new FileDrop('zone', options)
+    var options = {input: false};
+    var zone = new FileDrop('zone', options);
 
     zone.event('send', function (files) {
         files.each(function (file) {
@@ -32,24 +32,23 @@ function setupLoad() {
                 'text'
             )
         })
-    })
+    });
+}
+// forEach method from http://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/
+function nodeListForEach(array, callback, scope) {
+    for (var i = 0; i < array.length; i++) {
+       callback.call(scope, i, array[i]);
+    }
 }
 function buildOrderText() {
     var list = document.getElementById('list');
     var rows = list.children;
 
-    // forEach method from http://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/
-    var nodeListForEach = function (array, callback, scope) {
-        for (var i = 0; i < array.length; i++) {
-           callback.call(scope, i, array[i]);
-        }
-    };
-
     var rowTexts = [];
     nodeListForEach(rows, function (index, row) {
         rowTexts.push(index.toString());
         rowTexts.push(" ");
-        rowTexts.push(row.firstElementChild.textContent);
+        rowTexts.push(row.children[1].textContent);
         rowTexts.push("\n");
     });
     return rowTexts;
@@ -62,17 +61,38 @@ function clickSave() {
             {type: "text/plain;charset=" + document.characterSet}
         ),
         "order.txt"
-        //, (text_filename.value || text_filename.placeholder) + ".txt"
     );
 }
 function setupSave() {
     var saveButton = document.querySelector('#save');
     saveButton.addEventListener("click", clickSave, false);
 }
+function updateAccumulatedValues() {
+    var list = document.getElementById('list');
+    var rows = list.children;
+    var cumulative = 0.0;
+
+    nodeListForEach(rows, function (index, row) {
+        var columns = row.children;
+        var value = parseFloat(columns[3].textContent);
+        cumulative += value;
+        columns[4].textContent = cumulative.toString();
+    });
+}
 function setupDrag() {
-    dragula([document.querySelector('#list')]);
+    var d = dragula([
+        document.querySelector('#list')
+    ], {
+        moves: function(el, source, handle, sibling) {
+            return handle.classList.contains('drag_handle')
+        }
+    });
+    d.on('drop', function(el, target, source, sibling) {
+        updateAccumulatedValues();
+    });
 }
 function setup() {
+    updateAccumulatedValues();
     setupLoad();
     setupSave();
     setupDrag();
@@ -94,71 +114,50 @@ Drag & drop a file here to view its contents.
 <table>
     <thead>
     <tr>
-        <th colspan="4">Original</th>
-        <th colspan="4">table heading</th>
-        <th colspan="4">table heading</th>
-        <th colspan="4">table heading</th>
-        <th colspan="4">table heading</th>
-        <th colspan="1"></th>
-        <th colspan="4">Current Pos</th>
+        <th>Drag</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Cumulative</th>
     </tr>
     </thead>
     <tfoot>
     <tr>
-        <th colspan="4">Original</th>
-        <th colspan="4">table footer</th>
-        <th colspan="4">table footer</th>
-        <th colspan="4">table footer</th>
-        <th colspan="4">table footer</th>
-        <th colspan="1"></th>
-        <th colspan="4">Current Pos</th>
+        <th>Drag</th>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Value</th>
+        <th>Cumulative</th>
     </tr>
     </tfoot>
     <tbody id="list">
     <tr>
-        <th colspan="4">First Row</th>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="1"><div class="drag_handle">=</div></td>
-        <td colspan="4">1</td>
+        <td><div class="drag_handle">=</div></td>
+        <th>A 123</th>
+        <td>Foo</td>
+        <td>3</td>
+        <td></td>
     </tr>
     <tr>
-        <th colspan="4">Second Row</th>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="1"><div class="drag_handle">=</div></td>
-        <td colspan="4">2</td>
+        <td><div class="drag_handle">=</div></td>
+        <th>A 156</th>
+        <td>Bar</td>
+        <td>3.4</td>
+        <td></td>
     </tr>
     <tr>
-        <th colspan="4">Third Row</th>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="1"><div class="drag_handle">=</div></td>
-        <td colspan="4">3</td>
+        <td><div class="drag_handle">=</div></td>
+        <th>B 87</th>
+        <td>Baz</td>
+        <td>9</td>
+        <td></td>
     </tr>
     <tr>
-        <th colspan="4">Fourth Row</th>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="1"><div class="drag_handle">=</div></td>
-        <td colspan="4">4</td>
-    </tr>
-    <tr>
-        <th colspan="4">Fifth Row</th>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="4">data</td>
-        <td colspan="1"><div class="drag_handle">=</div></td>
-        <td colspan="4">5</td>
+        <td><div class="drag_handle">=</div></td>
+        <th>C XYZ-109</th>
+        <td>Zom</td>
+        <td>1</td>
+        <td></td>
     </tr>
     </tbody>
 </table>
